@@ -119,7 +119,7 @@ ChorusPickSongComponentDelegate
         [[ToastComponent shareToastComponent] showWithMessage:veString(@"直播间内容违规，直播间已被关闭") delay:0.8];
     }
     else if (type == 2 && [self isHost]) {
-        [[ToastComponent shareToastComponent] showWithMessage:veString(@"本次体验时间已超过20mins") delay:0.8];
+        [[ToastComponent shareToastComponent] showWithMessage:veString(@"本次体验时间已超过20分钟") delay:0.8];
     } else {
         if (![self isHost]) {
             [[ToastComponent shareToastComponent] showWithMessage:veString(@"房主已关闭合唱房") delay:0.8];
@@ -182,6 +182,8 @@ ChorusPickSongComponentDelegate
                            leadSingerUserModel:leadSingerUserModel];
     [self.pickSongComponent updatePickedSongList];
     [self.bottomView updateBottomLists];
+    [self.bottomView updateBottomStatus:ChorusRoomBottomStatusLocalMic
+                               isActive:![ChorusRTCManager shareRtc].isMicrophoneOpen];
 }
 
 /// 真正开始演唱歌曲
@@ -201,6 +203,8 @@ ChorusPickSongComponentDelegate
     [self.musicComponent reallyStartSingSong:songModel];
     [self.pickSongComponent updatePickedSongList];
     [self.bottomView updateBottomLists];
+    [self.bottomView updateBottomStatus:ChorusRoomBottomStatusLocalMic
+                               isActive:![ChorusRTCManager shareRtc].isMicrophoneOpen];
 }
 
 - (void)receivedFinishSingSong:(NSInteger)score nextSongModel:(ChorusSongModel *)nextSongModel {
@@ -279,9 +283,9 @@ ChorusPickSongComponentDelegate
 
 #pragma mark - ChorusRTCManagerDelegate
 
-- (void)chorusRTCManager:(ChorusRTCManager *_Nonnull)chorusRTCManager onStreamSyncInfoReceived:(NSString *)time {
+- (void)chorusRTCManager:(ChorusRTCManager *_Nonnull)chorusRTCManager onStreamSyncInfoReceived:(NSString *)json {
     dispatch_queue_async_safe(dispatch_get_main_queue(), ^{
-        [self.musicComponent updateCurrentSongTime:[time integerValue]];
+        [self.musicComponent updateCurrentSongTime:json];
     });
 }
 
@@ -321,9 +325,30 @@ ChorusPickSongComponentDelegate
     
     __weak typeof(self) weakSelf = self;
     NSString *roomID = self.roomModel.roomID ? self.roomModel.roomID : @"";
-    [ChorusRTSManager reconnectWithRoomID:roomID block:^(RTMACKModel * _Nonnull model) {
-        if (!model.result) {
+    [ChorusRTSManager reconnectWithBlock:^(NSString * _Nonnull RTCToken,
+                                           ChorusRoomModel * _Nonnull roomModel,
+                                           ChorusUserModel * _Nonnull userModel,
+                                           ChorusUserModel * _Nonnull hostUserModel,
+                                           ChorusSongModel * _Nonnull songModel,
+                                           ChorusUserModel * _Nonnull leadSingerUserModel,
+                                           ChorusUserModel * _Nonnull succentorUserModel,
+                                           ChorusSongModel * _Nonnull nextSongModel,
+                                           NSInteger audienceCount,
+                                           RTMACKModel * _Nonnull model) {
+        if (model.result) {
+            [weakSelf updateRoomViewWithData:RTCToken
+                                   roomModel:roomModel
+                                   userModel:userModel
+                               hostUserModel:hostUserModel
+                                   songModel:songModel
+                         leadSingerUserModel:leadSingerUserModel
+                          succentorUserModel:succentorUserModel
+                               nextSongModel:nextSongModel];
+        } else if (model.code == RTMStatusCodeUserIsInactive ||
+                   model.code == RTMStatusCodeRoomDisbanded ||
+                   model.code == RTMStatusCodeUserNotFound) {
             [weakSelf hangUp:YES];
+            [[ToastComponent shareToastComponent] showWithMessage:model.message delay:0.8];
         }
     }];
 }
@@ -352,7 +377,6 @@ ChorusPickSongComponentDelegate
            leadSingerUserModel:(ChorusUserModel *)leadSingerUserModel
             succentorUserModel:(ChorusUserModel *)succentorUserModel
                  nextSongModel:(ChorusSongModel *)nextSongModel {
-    
     _hostUserModel = hostUserModel;
     _roomModel = roomModel;
     _rtcToken = rtcToken;
@@ -360,16 +384,16 @@ ChorusPickSongComponentDelegate
     [ChorusRTCManager shareRtc].delegate = self;
     [[ChorusRTCManager shareRtc] joinChannelWithToken:rtcToken
                                                roomID:self.roomModel.roomID
-                                                  userID:[LocalUserComponent userModel].uid
+                                               userID:[LocalUserComponent userModel].uid
                                                isHost:[self isHost]];
-    
+
     self.staticView.roomModel = self.roomModel;
-    
+
     // 进入房间时赋值
     [ChorusDataManager shared].currentSongModel = songModel;
     [ChorusDataManager shared].leadSingerUserModel = leadSingerUserModel;
     [ChorusDataManager shared].succentorUserModel = succentorUserModel;
-    
+
     if (([ChorusDataManager shared].isLeadSinger || [ChorusDataManager shared].isSuccentor) && songModel.singStatus != ChorusSongModelSingStatusFinish) {
         [[ChorusRTCManager shareRtc] switchIdentifyBecomeSinger:YES];
     }
@@ -377,20 +401,17 @@ ChorusPickSongComponentDelegate
     if (songModel) {
         if (songModel.singStatus == ChorusSongModelSingStatusWaiting) {
             [self.musicComponent prepareStartSingSong:songModel
-                                   leadSingerUserModel:nil];
-        }
-        else if (songModel.singStatus == ChorusSongModelSingStatusSinging) {
+                                  leadSingerUserModel:nil];
+        } else if (songModel.singStatus == ChorusSongModelSingStatusSinging) {
             [self.musicComponent prepareMaterialsWithSongModel:songModel];
             [self.musicComponent reallyStartSingSong:songModel];
-        }
-        else if (songModel.singStatus == ChorusSongModelSingStatusFinish) {
-            
+        } else if (songModel.singStatus == ChorusSongModelSingStatusFinish) {
             [[ChorusDataManager shared] resetDataManager];
-            
+
             [self.musicComponent showSongEndWithNextSongModel:nextSongModel];
         }
     }
-    
+
     [self.bottomView updateBottomLists];
 }
 

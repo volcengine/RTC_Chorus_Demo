@@ -116,7 +116,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 断线重连
 /// @param block Callback
-+ (void)reconnectWithRoomID:(NSString *)roomID block:(void(^)(RTMACKModel *model))block;
++ (void)reconnectWithBlock:(void(^)(NSString *RTCToken,
+                                    ChorusRoomModel *roomModel,
+                                    ChorusUserModel *userModel,
+                                    ChorusUserModel *hostUserModel,
+                                    ChorusSongModel *songModel,
+                                    ChorusUserModel *leadSingerUserModel,
+                                    ChorusUserModel *succentorUserModel,
+                                    ChorusSongModel *nextSongModel,
+                                    NSInteger audienceCount,
+                                    RTMACKModel *model))block;
 
 #pragma mark - Notification Message
 

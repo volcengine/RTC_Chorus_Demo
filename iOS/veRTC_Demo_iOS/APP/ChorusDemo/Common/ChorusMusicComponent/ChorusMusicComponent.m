@@ -31,7 +31,6 @@
 @property (nonatomic, strong) ChorusSingerComponent *singerComponent;
 @property (nonatomic, strong) ChorusWaitingSingerJoinView *waitingJoinView;
 @property (nonatomic, strong) ChorusMusicLyricsView *lrcView;
-
 @property (nonatomic, assign) BOOL downloadCompleteNeedPlay;
 
 @end
@@ -157,7 +156,6 @@
          leadSingerUserModel:(ChorusUserModel *_Nullable)leadSingerUserModel {
     
     [self.tuningView resetUI];
-    [[ChorusRTCManager shareRtc] enableEarMonitor:NO];
     
     if (!songModel) {
         [self updateWithChorusStatus:ChorusStatusIdle];
@@ -189,8 +187,7 @@
             [[ChorusRTCManager shareRtc] switchAccompaniment:YES];
             [[ChorusRTCManager shareRtc] setMusicVolume:10];
             [[ToastComponent shareToastComponent] showWithMessage:veString(@"开始演唱吧")];
-        }
-        else {
+        } else {
             // 如果开始演唱伴奏还没有下载完成，则下载完成后开始播放伴奏
             self.downloadCompleteNeedPlay = YES;
         }
@@ -290,10 +287,16 @@
     }
 }
 
-- (void)updateCurrentSongTime:(NSInteger)songTime {
-    
-    [self.lrcView playAtTime:songTime];
-    self.musicControlView.time = songTime;
+- (void)updateCurrentSongTime:(NSString *)json {
+    NSDictionary *dic = [NetworkingTool decodeJsonMessage:json];
+    if (dic && [dic isKindOfClass:[NSDictionary class]]) {
+        NSInteger progress = [dic[@"progress"] integerValue];
+        NSString *musicId = dic[@"music_id"];
+        if ([musicId isEqualToString:[ChorusDataManager shared].currentSongModel.musicId]) {
+            [self.lrcView playAtTime:progress];
+            self.musicControlView.time = progress;
+        }
+    }
 }
 
 - (void)dismissTuningPanel {
@@ -301,15 +304,20 @@
 }
 
 - (void)sendSongTime:(NSInteger)songTime {
-    if ([ChorusDataManager shared].isLeadSinger) {
+    ChorusSongModel *songModel = [ChorusDataManager shared].currentSongModel;
+    if ([ChorusDataManager shared].isLeadSinger &&
+        songModel && NOEmptyStr(songModel.musicId)) {
         NSTimeInterval second = (NSTimeInterval)songTime / 1000;
-        // update self
-        [self.lrcView playAtTime:second];
-        self.musicControlView.time = second;
         
-        // update remote artist
-        NSString *timeStr = [NSString stringWithFormat:@"%ld", (long)second];
-        [[ChorusRTCManager shareRtc] sendStreamSyncTime:timeStr];
+        NSDictionary *dic = @{@"progress" : @(second),
+                              @"music_id" : songModel.musicId};
+        NSString *json = [dic yy_modelToJSONString];
+        
+        // 发送给远端歌词进度
+        [[ChorusRTCManager shareRtc] sendStreamSyncTime:json];
+        
+        // 更新本地歌词进度
+        [self updateCurrentSongTime:json];
     }
 }
 

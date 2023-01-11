@@ -90,10 +90,12 @@
                                                block:^(BOOL isAuthorize) {
             if (isAuthorize) {
                 [self.rtcEngineKit startAudioCapture];
+                self->_isMicrophoneOpen = YES;
             }
         }];
     } else {
         [self.rtcEngineKit stopAudioCapture];
+        _isMicrophoneOpen = NO;
     }
 }
 
@@ -363,10 +365,10 @@
         return;
     }
     
-    NSString *time = [[NSString alloc] initWithBytes:data.bytes length:data.length encoding:NSUTF8StringEncoding];
+    NSString *json = [[NSString alloc] initWithBytes:data.bytes length:data.length encoding:NSUTF8StringEncoding];
     
     if ([self.delegate respondsToSelector:@selector(chorusRTCManager:onStreamSyncInfoReceived:)]) {
-        [self.delegate chorusRTCManager:self onStreamSyncInfoReceived:time];
+        [self.delegate chorusRTCManager:self onStreamSyncInfoReceived:json];
     }
     
     // 副唱转发主唱时间

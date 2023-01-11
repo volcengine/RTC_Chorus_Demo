@@ -55,12 +55,12 @@
 3. 进入 `ChorusDemo/iOS/veRTC_Demo_iOS` 根目录，使用 Xcode 打开 `veRTC_Demo.xcworkspace`<br>
     <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_111f9afcd030018f2666aba0778ea9d4.png" width="500px" >	
 
-4. 在 Xcode 中打开 `Pods/Development Pods/Core/BuildConfig.h` 文件
-    <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_fe39d33b59dcf496ee32e27922c54309.png" width="500px" >	
+4. 在 Xcode 中打开 `Pods/Development Pods/Core/BuildConfig.h` 文件<br>
+    <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_0548899b170c606d3fe53adb7c670d4a.jpeg" width="500px" >	
 
-5. 填写 **LoginUrl**<br>
-    当前你可以使用 **https://common.rtc.volcvideo.com/rtc_demo_special/login** 作为测试服务器域名，仅提供跑通测试服务，无法保障正式需求。<br>
-    <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_e86dcf9655110aaa2e3bc8e21f86ede8.png" width="500px" >
+5. 填写 **HeadUrl**<br>
+    当前你可以使用 **https://common.rtc.volcvideo.com/rtc_demo_special** 作为测试服务器域名，仅提供跑通测试服务，无法保障正式需求。<br>
+    <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_bfd188ba8820fd30621ba0b3d4ae57b2.jpeg" width="500px" >
 
 
 6. **填写 APPID、APPKey、AccessKeyID 和 SecretAccessKey**<br>

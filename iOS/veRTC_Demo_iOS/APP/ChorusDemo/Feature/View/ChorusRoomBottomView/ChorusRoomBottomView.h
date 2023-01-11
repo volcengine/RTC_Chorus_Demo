@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updateBottomLists;
 
+- (void)updateBottomStatus:(ChorusRoomBottomStatus)status isActive:(BOOL)isActive;
+
 - (void)updatePickedSongCount:(NSInteger)count;
 
 @end

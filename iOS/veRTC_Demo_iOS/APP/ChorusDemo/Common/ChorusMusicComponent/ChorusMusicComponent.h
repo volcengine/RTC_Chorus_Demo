@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Update current song progress
 /// @param songTime song progress
-- (void)updateCurrentSongTime:(NSInteger)songTime;
+- (void)updateCurrentSongTime:(NSString *)json;
 
 /// 发送歌曲当前播放时长
 /// @param songTime 歌曲播放时长

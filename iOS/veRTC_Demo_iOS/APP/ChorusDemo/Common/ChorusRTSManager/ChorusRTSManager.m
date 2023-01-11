@@ -289,18 +289,55 @@
 
 /// 断线重连
 /// @param block Callback
-+ (void)reconnectWithRoomID:(NSString *)roomID block:(void(^)(RTMACKModel *model))block; {
-    NSDictionary *dic = @{
-        @"room_id" : roomID
-    };
-    dic = [JoinRTSParams addTokenToParams:dic];
++ (void)reconnectWithBlock:(void(^)(NSString *RTCToken,
+                                    ChorusRoomModel *roomModel,
+                                    ChorusUserModel *userModel,
+                                    ChorusUserModel *hostUserModel,
+                                    ChorusSongModel *songModel,
+                                    ChorusUserModel *leadSingerUserModel,
+                                    ChorusUserModel *succentorUserModel,
+                                    ChorusSongModel *nextSongModel,
+                                    NSInteger audienceCount,
+                                    RTMACKModel *model))block {
+    NSDictionary *dic = [JoinRTSParams addTokenToParams:nil];
     
     [[ChorusRTCManager shareRtc] emitWithAck:@"owcReconnect" with:dic block:^(RTMACKModel * _Nonnull ackModel) {
         
-        if (block) {
-            block(ackModel);
+        NSString *RTCToken = @"";
+        ChorusRoomModel *roomModel = nil;
+        ChorusUserModel *hostUserModel = nil;
+        ChorusUserModel *userModel = nil;
+        ChorusSongModel *songModel = nil;
+        ChorusUserModel *leadSingerUserModel = nil;
+        ChorusUserModel *succentorUserModel = nil;
+        ChorusSongModel *nextSongModel = nil;
+        NSInteger count = -1;
+        if ([ChorusRTSManager ackModelResponseClass:ackModel]) {
+            NSDictionary *songDic = ackModel.response[@"cur_song"];
+            songModel = [ChorusSongModel yy_modelWithJSON:songDic];
+            
+            roomModel = [ChorusRoomModel yy_modelWithJSON:ackModel.response[@"room_info"]];
+            hostUserModel = [ChorusUserModel yy_modelWithJSON:ackModel.response[@"host_info"]];
+            userModel = [ChorusUserModel yy_modelWithJSON:ackModel.response[@"user_info"]];
+            RTCToken = [NSString stringWithFormat:@"%@", ackModel.response[@"rtc_token"]];
+            leadSingerUserModel = [ChorusUserModel yy_modelWithJSON:ackModel.response[@"leader_user"]];
+            succentorUserModel = [ChorusUserModel yy_modelWithJSON:ackModel.response[@"succentor_user"]];
+            nextSongModel = [ChorusSongModel yy_modelWithJSON:ackModel.response[@"next_song"]];
+            NSString *str = [NSString stringWithFormat:@"%@", ackModel.response[@"audience_count"]];
+            count = [str integerValue];
         }
-        NSLog(@"[%@]-owcReconnect %@ \n %@", [self class], dic, ackModel.response);
+        if (block) {
+            block(RTCToken,
+                  roomModel,
+                  userModel,
+                  hostUserModel,
+                  songModel,
+                  leadSingerUserModel,
+                  succentorUserModel,
+                  nextSongModel,
+                  count,
+                  ackModel);
+        }
     }];
 }
 

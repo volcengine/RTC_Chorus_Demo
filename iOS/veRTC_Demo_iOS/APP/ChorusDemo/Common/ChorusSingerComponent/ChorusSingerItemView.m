@@ -112,7 +112,7 @@
 /// 更新用户说话声音动画
 /// @param volume 说话音量
 - (void)updateUserAudioVolume:(NSInteger)volume {
-    self.animationView.hidden = (volume < 60);
+    self.animationView.hidden = (volume < 26);
 }
 
 - (void)addWiggleAnimation:(UIView *)view {

@@ -53,12 +53,12 @@
     [[ToastComponent shareToastComponent] showLoading];
     __weak __typeof(self) wself = self;
     [ChorusRTSManager startLive:self.roomNameLabel.text
-                                 userName:[LocalUserComponent userModel].name
-                              bgImageName:_bgImageName
-                                    block:^(NSString * _Nonnull RTCToken,
-                                            ChorusRoomModel * _Nonnull roomModel,
-                                            ChorusUserModel * _Nonnull hostUserModel,
-                                            RTMACKModel * _Nonnull model) {
+                       userName:[LocalUserComponent userModel].name
+                    bgImageName:_bgImageName
+                          block:^(NSString * _Nonnull RTCToken,
+                                  ChorusRoomModel * _Nonnull roomModel,
+                                  ChorusUserModel * _Nonnull hostUserModel,
+                                  RTMACKModel * _Nonnull model) {
         if (model.result) {
             ChorusRoomViewController *next = [[ChorusRoomViewController alloc]
                                                  initWithRoomModel:roomModel

@@ -25,8 +25,8 @@ typedef NS_ENUM(NSInteger, ChorusStatus) {
 
 /// 收到歌词同步信息回调
 /// @param chorusRTCManager RTC manager
-/// @param time 歌词进度时间
-- (void)chorusRTCManager:(ChorusRTCManager *_Nonnull)chorusRTCManager onStreamSyncInfoReceived:(NSString *)time;
+/// @param json 歌词进度时间
+- (void)chorusRTCManager:(ChorusRTCManager *_Nonnull)chorusRTCManager onStreamSyncInfoReceived:(NSString *)json;
 
 /// 伴奏播放完成回调
 /// @param chorusRTCManager RTC manager
@@ -70,6 +70,9 @@ typedef NS_ENUM(NSInteger, ChorusStatus) {
 
 /// 是否开启摄像头
 @property (nonatomic, assign, readonly) BOOL isCameraOpen;
+
+/// 是否开启摄像头
+@property (nonatomic, assign, readonly) BOOL isMicrophoneOpen;
 
 /*
  * RTC Manager Singletons

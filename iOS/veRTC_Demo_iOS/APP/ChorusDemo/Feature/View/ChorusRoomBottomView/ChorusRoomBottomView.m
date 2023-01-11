@@ -135,7 +135,9 @@
             [lists addObject:button];
             
             // 主唱 副唱 不允许关闭麦克风
-            if (bottomStatus == ChorusRoomBottomStatusLocalMic && ([ChorusDataManager shared].isLeadSinger || [ChorusDataManager shared].isSuccentor)) {
+            if (bottomStatus == ChorusRoomBottomStatusLocalMic &&
+                ([ChorusDataManager shared].isLeadSinger ||
+                 [ChorusDataManager shared].isSuccentor)) {
                 button.enabled = NO;
                 button.alpha = 0.5;
             }
@@ -188,6 +190,20 @@
             make.width.mas_equalTo(counentWidth);
             make.right.equalTo(self).offset(-94);
         }];
+    }
+}
+
+- (void)updateBottomStatus:(ChorusRoomBottomStatus)status isActive:(BOOL)isActive {
+    ChorusRoomItemButton *currentButton = nil;
+    for (int i = 0; i < self.buttonLists.count; i++) {
+        ChorusRoomItemButton *button = self.buttonLists[i];
+        if (button.tagNum == status) {
+            currentButton = button;
+            break;
+        }
+    }
+    if (currentButton) {
+        currentButton.status = isActive ? ButtonStatusActive : ButtonStatusNone;
     }
 }
 

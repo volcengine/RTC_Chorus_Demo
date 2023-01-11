@@ -148,11 +148,13 @@
 
 - (void)resetUI {
     [self.switchView setOn:NO];
+    [[ChorusRTCManager shareRtc] enableEarMonitor:NO];
     [self.reverberationView resetItemState];
     self.musicSlider.value = 10;
     self.musicRightLabel.text = @"10";
     self.switchView.enabled = [ChorusRTCManager shareRtc].canEarMonitor;
     [self enableMusicVolume];
+    [[ChorusRTCManager shareRtc] setEarMonitorVolume:self.earSlider.value];
 }
 
 - (void)setMusicVolume:(NSInteger)volume {
