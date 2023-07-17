@@ -476,14 +476,17 @@
     });
 }
 
-- (void)rtcEngine:(ByteRTCVideo *)engine onRemoteVideoStateChanged:(ByteRTCRemoteStreamKey *)streamKey withVideoState:(ByteRTCRemoteVideoState)state withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason {
+- (void)rtcEngine:(ByteRTCVideo *)engine onUserStartVideoCapture:(NSString *)roomId uid:(NSString *)uid {
     dispatch_queue_async_safe(dispatch_get_main_queue(), ^{
-        UIView *view = [self getStreamViewWithUserID:streamKey.userId];
-        if (state == ByteRTCRemoteVideoStateFailed || state == ByteRTCLocalVideoStreamStateStopped) {
-            view.hidden = YES;
-        } else {
-            view.hidden = NO;
-        }
+        UIView *view = [self getStreamViewWithUserID:uid];
+        view.hidden = NO;
+    })
+}
+
+- (void)rtcEngine:(ByteRTCVideo *)engine onUserStopVideoCapture:(NSString *)roomId uid:(NSString *)uid {
+    dispatch_queue_async_safe(dispatch_get_main_queue(), ^{
+        UIView *view = [self getStreamViewWithUserID:uid];
+        view.hidden = YES;
     })
 }
 
@@ -508,7 +511,7 @@
 - (void)rtcEngine:(ByteRTCVideo *)engine onLocalAudioPropertiesReport:(NSArray<ByteRTCLocalAudioPropertiesInfo *> *)audioPropertiesInfos {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     for (ByteRTCLocalAudioPropertiesInfo *info in audioPropertiesInfos) {
-        [dict setValue:@(info.audioPropertiesInfo.linearVolume) forKey:[LocalUserComponent userModel].uid];
+        [dict setValue:@(info.audioPropertiesInfo.linearVolume) forKey:[LocalUserComponent userModel].uid ? : @""];
     }
     dispatch_queue_async_safe(dispatch_get_main_queue(), ^{
         if ([self.delegate respondsToSelector:@selector(chorusRTCManager:onReportUserAudioVolume:)]) {

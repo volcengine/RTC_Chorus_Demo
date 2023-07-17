@@ -53,7 +53,7 @@
     <img src="https://lf3-static.bytednsdoc.com/obj/eden-cn/pkupenuhr/podinstall.jpg" width="500px" >	
 
 3. 进入 `ChorusDemo/iOS/RTCSolution` 根目录，使用 Xcode 打开 `RTCSolution.xcworkspace`<br>
-    <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_111f9afcd030018f2666aba0778ea9d4.png" width="500px" >	
+    <img src="https://lf3-static.bytednsdoc.com/obj/eden-cn/pkupenuhr/RTCSolution.png" width="500px" >	
 
 4. 在 Xcode 中打开 `Pods/Development Pods/ToolKit/BuildConfig.h` 文件<br>
 
@@ -77,7 +77,7 @@
 1. 将手机连接到电脑，在 `iOS Device` 选项中勾选您的 iOS 设备。<br>
     <img src="https://lf3-static.bytednsdoc.com/obj/eden-cn/pkupenuhr/60a2af60-03d1-48cf-8874-75f9751efd20.png" width="500px" >	
 2. 登录 Apple ID。
-    2.1 选择 Xcode 页面左上角 **Xcode** > **Preferences**，或通过快捷键 **Command** + **,**  打开 Preferences。
+    2.1 选择 Xcode 页面左上角 **Xcode** > **Settings**，或通过快捷键 **Command** + **,**  打开 Settings。
     2.2 选择 **Accounts**，点击左下部 **+**，选择 Apple ID 进行账号登录。<br>
     <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_9c95dc2adabc63e8075213e3d5a6b7dc.png" width="500px" >
 
@@ -96,7 +96,7 @@
 ### **步骤 6 ：编译运行**
 
 选择 **Product** > **Run**， 开始编译。编译成功后你的 iOS 设备上会出现新应用。若为免费苹果账号，需先在`设置->通用-> VPN与设备管理 -> 描述文件与设备管理`中信任开发者 APP。<br>
-    <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_e1ad6e8d6c264be08ad3a5b749bc6c93.png" width="500px" >
+    <img src="https://lf3-static.bytednsdoc.com/obj/eden-cn/lpqubqnuln/092f17e7-7668-479c-a09b-1fdd65d42a9c.png" width="500px" >
 
 ## 运行开始界面
 <img src="https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_d113411372ba2333cc0622501d59a752.jpg" width="200px" >
